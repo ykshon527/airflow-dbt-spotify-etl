@@ -8,13 +8,12 @@ import socketserver
 import threading
 import webbrowser
 import time
-
-CLIENT_ID = "4d8ff6e2a8e44860a78e82dd62fe00e0"
-CLIENT_SECRET = "109a57119b3e4c6aa8fd236dde26dca3"
-REDIRECT_URI = "http://127.0.0.1:8080/callback"
-SCOPE = "user-read-recently-played"
+import dotenv
+import os
 
 auth_code = None
+dotenv_file = dotenv.find_dotenv()
+dotenv.load_dotenv(dotenv_file)
 
 # HTTP handler to catch redirect with the authorization code
 class OAuthHandler(http.server.SimpleHTTPRequestHandler):
@@ -41,10 +40,10 @@ def get_access_token():
 
     # Step 1: Ask user to log in and approve
     params = {
-        "client_id": CLIENT_ID,
+        "client_id": os.getenv("CLIENT_ID"),
         "response_type": "code",
-        "redirect_uri": REDIRECT_URI,
-        "scope": SCOPE
+        "redirect_uri": os.genenv("REDIRECT_URI"),
+        "scope": os.genenv("SCOPE")
     }
     auth_url = "https://accounts.spotify.com/authorize?" + urllib.parse.urlencode(params)
 
@@ -78,14 +77,16 @@ def get_access_token():
     token = response.json().get("access_token")
 
     print("Access Token:", token)
-    return token
+    os.environ["TOKEN"] = token
+    dotenv.set_key(dotenv_file, "TOKEN", os.environ["TOKEN"])
+    return
 
 # Creating an function to be used in other pyrhon files
-def return_dataframe(spotify_token): 
+def return_dataframe(): 
     input_variables = {
         "Accept" : "application/json",
         "Content-Type" : "application/json",
-        "Authorization" : "Bearer {token}".format(token=spotify_token)
+        "Authorization" : "Bearer {token}".format(token = os.environ["TOKEN"])
     }
      
     today = datetime.datetime.now()
@@ -119,6 +120,3 @@ def return_dataframe(spotify_token):
     song_df = pd.DataFrame(song_dict, columns = ["song_name", "artist_name", "played_at", "timestamp"])
     return song_df
 
-# if __name__ == "__main__":
-#     #token = get_access_token()
-#     df = return_dataframe('')
