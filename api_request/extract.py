@@ -42,8 +42,8 @@ def get_access_token():
     params = {
         "client_id": os.getenv("CLIENT_ID"),
         "response_type": "code",
-        "redirect_uri": os.genenv("REDIRECT_URI"),
-        "scope": os.genenv("SCOPE")
+        "redirect_uri": os.getenv("REDIRECT_URI"),
+        "scope": os.getenv("SCOPE")
     }
     auth_url = "https://accounts.spotify.com/authorize?" + urllib.parse.urlencode(params)
 
@@ -59,7 +59,7 @@ def get_access_token():
 
     # Step 2: Exchange code for access token
     token_url = "https://accounts.spotify.com/api/token"
-    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    auth_str = f"{os.getenv("CLIENT_ID")}:{os.getenv("CLIENT_SECRET")}"
     b64_auth_str = base64.b64encode(auth_str.encode()).decode()
 
     headers = {
@@ -69,20 +69,20 @@ def get_access_token():
     data = {
         "grant_type": "authorization_code",
         "code": auth_code,
-        "redirect_uri": REDIRECT_URI
+        "redirect_uri": os.getenv("REDIRECT_URI")
     }
 
     response = requests.post(token_url, headers=headers, data=data)
     response.raise_for_status()
     token = response.json().get("access_token")
 
-    print("Access Token:", token)
     os.environ["TOKEN"] = token
     dotenv.set_key(dotenv_file, "TOKEN", os.environ["TOKEN"])
     return
 
 # Creating an function to be used in other pyrhon files
-def return_dataframe(): 
+def return_dataframe():
+    #get_access_token()
     input_variables = {
         "Accept" : "application/json",
         "Content-Type" : "application/json",

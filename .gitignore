@@ -1,3 +1,8 @@
 .env
 .venv
 venv
+my_played_tracks.sqlite
+logs
+plugins
+__pycache__
+postgres
