@@ -50,12 +50,12 @@ def get_access_token():
     # Start temporary local server in background
     threading.Thread(target=start_http_server, daemon=True).start()
 
-    print("Opening browser for Spotify login...")
-    webbrowser.open(auth_url)
+    # print("Opening browser for Spotify login...")
+    # webbrowser.open(auth_url)
 
-    # Wait for redirect to set auth_code
-    while auth_code is None:
-        time.sleep(0.1)
+    # # Wait for redirect to set auth_code
+    # while auth_code is None:
+    #     time.sleep(0.1)
 
     # Step 2: Exchange code for access token
     token_url = "https://accounts.spotify.com/api/token"
@@ -75,6 +75,7 @@ def get_access_token():
     response = requests.post(token_url, headers=headers, data=data)
     response.raise_for_status()
     token = response.json().get("access_token")
+    print(token)
 
     os.environ["TOKEN"] = token
     dotenv.set_key(dotenv_file, "TOKEN", os.environ["TOKEN"])
@@ -119,4 +120,3 @@ def return_dataframe():
     }
     song_df = pd.DataFrame(song_dict, columns = ["song_name", "artist_name", "played_at", "timestamp"])
     return song_df
-

@@ -1,4 +1,4 @@
-from extract import return_dataframe
+from extract import return_dataframe, get_access_token
 from transform import Data_Quality, Transform_df
 from datetime import datetime
 import datetime
@@ -105,17 +105,21 @@ def insert_fav_artist(conn, data):
 
 def main():
     try:
+        get_access_token()
         data = return_dataframe()
         conn = connect_to_db()
         create_table_my_played_tracks(conn)
         create_table_fav_artist(conn)
         insert_my_played_tracks(conn,data)
-        Data_Quality(data)
-        Transformed_df=Transform_df(data) 
-        insert_fav_artist(conn,Transformed_df)
+        #run below commands if you want to run transformations and clean up in python
+        # Data_Quality(data)
+        # Transformed_df=Transform_df(data) 
+        # insert_fav_artist(conn,Transformed_df)
     except Exception as e:
         print(f"An error occurred during execution: {e}")
     finally:
         if 'conn' in locals():
             conn.close()
             print("Database connection closed.")
+
+main()

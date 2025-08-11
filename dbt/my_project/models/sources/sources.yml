@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw
+    database: airflow
+    tables:
+      - name: my_played_tracks
+        columns:
+          - name: id
+          - name: song_name
+          - name: artist_name
+          - name: played_at
+          - name: timestamp
+          - name: inserted_at
